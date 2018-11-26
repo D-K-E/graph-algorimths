@@ -1,0 +1,27 @@
+{-
+Module      :  Graph Primitive Types
+Description :  Trying to define graph primitives in haskell to implement algorithms
+Copyright   :  Kaan Eraslan
+License     :  Mit
+
+Maintainer  :  Kaan
+Stability   :  unstable
+Portability :  don't know
+-}
+module Graph(
+  Graph(..)
+  ) where
+
+import qualified Vertice
+import qualified Edge
+
+data Graph = Graph (Vertice.VertexIDs, Edge.EdgeIDs)
+
+-- Graph Related Functions
+
+getOrder :: Graph -> Integer
+isTrivial :: Graph -> Bool
+minDegree :: Graph -> Integer -- get minimum degree of graph
+maxDegree :: Graph -> Integer -- get maximum degree of graph
+averageDegree :: Graph -> Integer  -- get average degree of graph
+edgeVertexRatio :: Graph -> Integer  -- get edge vertex ratio of graph

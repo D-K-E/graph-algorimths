@@ -16,50 +16,12 @@ Portability :  don't know
 
 -- Data Declarations
 
--- Vertex
-
-data Vertex = Vertex {
-  getInIds :: VertexIDs
-  , getVertexId :: VertexID
-  , getVertexData :: VDataL
-  , getOutIds :: VertexIDs
-  } deriving (Show, Eq)
-
-data VData = String
-           | Integer
-           | Int
-           | Char
-           | Bool
-           | Double
-           deriving(Show, Eq)
-
-data VertexID = VertexID Integer
-              deriving(Show, Eq, Ord)
-
-data VertexIDs = VertexIDs{
-  getVertexIds :: [VertexID]
-  }   deriving(Show, Eq, Ord)
-
-data VDataL = VDataL{
-  getVertexDataL :: [VData]
-  } deriving(Show, Eq)
-
-data Vertices = Vertices [Vertex]
-              deriving(Show, Eq)
-
 -- Edge
 
-data Edge = Edge {
-  getEdgeData :: (Vertex, Vertex)
-  , getEdgeId :: EdgeID
-  , getEdgeFuncs :: FuncIDs
-  } deriving(Show, Eq)
+-- Continue dividing types into submodules
 
-data EdgeID = EdgeID Integer
-            deriving(Show, Eq)
-
-data EdgeIDs = EdgeIDs [EdgeID]
-             deriving(Show, Eq)
+import qualified Vertex
+import qualified Edges
 
 -- Functions for mapping functions to edges
 
@@ -72,7 +34,7 @@ data FuncIDs = FuncIDs{
 
 data Func = Func{
   getFuncId :: FuncID
-  , getFuncParams :: VDataL
+  , getFuncParams :: [Edge]
   }
 
 -- data FuncData = FuncData FuncId Func
@@ -81,17 +43,21 @@ data Func = Func{
 
 data Graph = Graph (VertexIDs, EdgeIDs)
 
+-- Path
+
+data Path = Path (VertexIDs, EdgeIDs)
+
 -- Function declarations
 
 -- Function Types
 
 -- Edge related functions
 
-getFirstV :: Edge -> Vertex
-getSecondV :: Edge -> Vertex
+getFirstV :: Edge -> Vertex  -- Get the first vertice of an edge
+getSecondV :: Edge -> Vertex -- Get the second vertice of an edge
 getV_e :: Edge -> Int -> Vertex
-getVs_e :: Edge -> [Vertex]
-getVs_es :: [Edge] -> [[Vertex]]
+getVs_e :: Edge -> [Vertex]  -- Get vertices of an edge
+getVs_es :: [Edge] -> [[Vertex]]  -- Get vertices of an edge list
 getVList_es :: [Edge] -> [Vertex]
 
 
@@ -99,11 +65,6 @@ getVList_es :: [Edge] -> [Vertex]
 
 getInEdges :: Vertex -> [Edge]
 
-
--- Graph Related Functions
-
-getOrder :: Graph -> Integer
-isTrivial :: Graph -> Bool
 
 -- Function Implementations
 
@@ -135,6 +96,11 @@ getVList_es edgeList = concat (getVs_es edgeList)
 
 -- Graph Related Functions
 
+-- TODO: Get min degree of graph
+-- TODO: Get max degree of graph
+-- TODO: Get average degree of graph
+-- TODO: Get edge vertex ratio of graph
+
 isTrivial aGraph = if null (fst aGraph)
                       then True
                       else False
@@ -143,3 +109,5 @@ isTrivial aGraph = if null (fst aGraph)
 getOrder aGraph = if isTrivial aGraph
                   then 0
                   else length (fst aGraph)
+
+--
