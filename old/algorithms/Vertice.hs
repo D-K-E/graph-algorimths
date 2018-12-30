@@ -12,10 +12,9 @@ Portability :  don't know
 module Vertice (
   Vertice (..)
   ,VData (..)
-  ,VDataL(..)
   ,VerticeID(..)
-  ,VerticeIDs(..)
-  ,Vertices(..)
+  ,filterVerticesByVertices
+  ,filterVerticesByVertice
   ) where
 
 
@@ -23,7 +22,7 @@ module Vertice (
 
 data Vertice = Vertice {
   verticeID :: VerticeID
-  , verticeData :: VDataL
+  , verticeData :: [VData]
   } deriving (Show, Eq)
 
 data VData = String
@@ -37,35 +36,34 @@ data VData = String
 data VerticeID = VerticeID Integer
               deriving(Show, Eq)
 
-data VerticeIDs = VerticeIDs{
-  verticeIDs :: [VerticeID]
-  }   deriving(Show, Eq)
-
-data VDataL = VDataL{
-  vDataL :: [VData]
-  } deriving(Show, Eq)
-
-data Vertices = Vertices {
-                         verticesData :: [Vertice]
-                         }
-              deriving(Show, Eq)
-
-
 -- Function Definitions Related to Vertices
 --
 checkVertexById :: Vertice.Vertice -> Vertice.Vertice -> Bool
 checkVertexId :: Vertice.Vertice -> VerticeID -> Bool
-filterVerticesById :: VerticeID -> Vertices -> Vertice
+filterVerticesById :: VerticeID -> [Vertice] -> [Vertice]
 
 
 
 -- Function Implementations Related to Vertices
 --
 
-checkVertexId vertice vId = (verticDonceID vertice) == vId
-checkVertexById vertice1 vertice2 = (verticeID vertice1) == (verticeID vertice2)
-filterVerticesById vId vertices = let verticeList = verticesData vertices
-                                       in filterVerticeListById verticeList vId
-                                      where filterVerticeListById (v:vs) vId = if checkVertexId v vId
-                                                                               then v
-                                                                               else filterVerticeListById vs vId
+checkVertexId vertice vId = verticeID vertice == vId
+checkVertexById vertice1 vertice2 = verticeID vertice1 == verticeID vertice2
+filterVerticesById vId (v:vs)
+  | null (v:vs) = []
+  | otherwise = if checkVertexId v vId
+                then [v]
+                else filterVerticesById vId vs
+
+filterVerticesByVertice :: Vertice -> [Vertice] -> [Vertice]
+filterVerticesByVertice v1 vs
+  | null vs = []
+  | otherwise = filterVerticesById (verticeID v1) vs
+
+
+filterVerticesByVertices :: [Vertice] -> [Vertice] -> [Vertice]
+filterVerticesByVertices (v1:vs1) vs2
+  | null (v1:vs1) = vs2
+  | null vs2 = []
+  | otherwise = filterVerticesByVertice v1 vs2 ++ filterVerticesByVertices
+  vs1 vs2
