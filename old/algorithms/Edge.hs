@@ -20,6 +20,11 @@ module Edge(
   ,filterEdgesByEdges
   ,filterEdgesByVertices
   ,filterEdgesWithVertexById
+  , isIncident
+  , isAdjacentEdge
+  , isAdjacentVertice
+  , filterAdjacentEdges
+  , filterAdjacentVertices
   ) where
 
 import qualified Vertice
@@ -40,7 +45,11 @@ data EdgeIDs = EdgeIDs [EdgeID]
              deriving(Show, Eq)
 
 -- Edge Related Function Declarations
+hasAdjacentVertex :: Vertice.Vertice -> [Vertice.Vertice] -> [Edge] -> Bool
+getAdjacentVertices :: Vertice.Vertice -> [Vertice.Vertice] -> [Edge] -> [Vertice.Vertice]
 
+hasAdjacentEdge :: Edge -> [Edge] -> Bool
+getAdjacentEdges :: Edge -> [Edge] -> [Edge]
 getVertexDegree :: Vertice.Vertice -> Edges -> Int
 
 -- Edge Related Function implementations
@@ -69,7 +78,12 @@ isAdjacentEdge e1 e2
   | getVertexIdFromEdge 1 e1 == getVertexIdFromEdge 1 e2 = True
   | otherwise = False
 
+filterAdjacentEdges :: [Edge] -> [Edge]
 
+filterAdjacentEdges (e1:e2:es)
+  | null es = []
+  | null (e1:e2) = []
+  
 getVertexDegree vertex edges
   | null edges = 0
   | otherwise = length (filterEdgesWithVertexById vertex edges)
@@ -107,7 +121,7 @@ filterEdgesWithVertexById :: Vertice.Vertice -> Edges -> Edges
 filterEdgesWithVertexById vertex [] = []
 filterEdgesWithVertexById vertex (anEdge:edgeList) = if checkVertexIdInEdge vertex anEdge
                                                      then anEdge : filterEdgesWithVertexById vertex edgeList
-						     else filterEdgesWithVertexById vertex edgeList
+	                        					     else filterEdgesWithVertexById vertex edgeList
 
 filterEdgesByVertices :: [Vertice.Vertice] -> [Edge] -> [Edge]
 filterEdgesByVertices (v:vs) es
@@ -119,3 +133,11 @@ isAdjacentVertice :: Vertice.Vertice -> Vertice.Vertice -> [Edge] -> Bool
 isAdjacentVertice v1 v2 es = let v1edges = filterEdgesWithVertexById v1 es
                                  v2edges = filterEdgesWithVertexById v2 es
                              in length filterEdgesByEdges v1edges v2edges > 0
+
+filterAdjacentVertices :: [Vertice.Vertice] -> [Edge] -> [Vertice.Vertice]
+
+filterAdjacentVertices (v1:v2:vs) es 
+  | null (v1:v2) = []
+  | null vs = []
+  | null (v2:vs) = []
+ 

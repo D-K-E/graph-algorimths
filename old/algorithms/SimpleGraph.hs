@@ -22,12 +22,8 @@ data Graph = Graph {vertices :: [Vertice.Vertice]
 
 -- Graph Related Functions to implement
 
-isComplete :: Graph -> Bool
+isComplete :: Graph -> Bool -- vertices are pairwise adjacent
 isRegular :: Graph -> Bool
-isVerticeIndependent :: Graph -> Vertice.Vertice -> Bool
-isVerticeListIndependent :: Graph -> Vertice.Vertice -> Bool
-isEdgeIndependent :: Graph -> Vertice.Vertice -> Bool
-isEdgeListIndependent :: Graph -> Vertice.Vertice -> Bool
 isDisjoint :: Graph -> Graph -> Bool
 isFHomomorphic :: Graph -> Graph -> Bool
 isIsomorphic :: Graph -> Graph -> Bool
@@ -45,7 +41,7 @@ getEdgeNumber graph = length (edges graph)
 
 
 
-edgeVertexRatio :: Graph -> Double  -- get edge vertex ratio of graph
+edgeVertexRatio :: Graph -> Float  -- get edge vertex ratio of graph
 edgeVertexRatio graph
   | null vertices graph = 0
   | otherwise = edges graph / vertices graph
@@ -75,7 +71,28 @@ getCommonSubgraph g1 g2 = Graph {
                                 }
 -- outputs the vertice with degree with the specified
 
--- Graph Related Function Implementations
+isVerticeListIndependent :: Graph -> [Vertice.Vertice] -> Bool
+
+isVerticeListIndependent g vs = let es = edges g
+                                in if length Edge.filterAdjacentVertices vs es > 0
+                                   then True
+                                   else False
+                                -- Graph Related Function Implementations
+isVerticeIndependent :: Graph -> Vertice.Vertice -> Bool
+
+isVerticeIndependent g v = let vs = [v]
+                           in isVerticeListIndependent g vs
+
+isEdgeListIndependent :: Graph -> [Edge.Edge] -> Bool
+
+isEdgeListIndependent g es = if length Edge.filterAdjacentEdges es > 0
+                             then True
+                             else False
+
+isEdgeIndependent :: Graph -> Edge.Edge -> Bool
+
+isEdgeIndependent g e = let es = [e]
+                        in isEdgeListIndependent g es
 
 getVertexDegree :: Vertice.Vertice -> Graph -> Integer
 getVertexDegree vertex graph
@@ -134,7 +151,8 @@ averageDegree graph = let verticeList = Vertice.Vertices.verticesData (vertices 
                              | otherwise = getDegreeSum (accu + getVertexDegree v edgeList) verticeList
 
 maxDegree :: Graph -> Integer -- get maximum degree of graph
-maxDegree graph = getVertexDegree (tail (sortVerticeListByDegree (vertices graph) graph)) graph
+maxDegree graph = getVertexDegree (last (sortVerticeListByDegree (vertices graph) graph)) graph
 
 minDegree :: Graph -> Integer -- get minimum degree of graph
 minDegree graph = getVertexDegree (head (sortVerticeListByDegree (vertices graph) graph)) graph
+
